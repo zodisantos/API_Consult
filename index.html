@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API_Consulta</title>
+</head>
+<body>
+     <h1>Consulta de IP e CEP</h1>
+     <hr class="yellow">
+
+  <h2>IP Atual:</h2>
+  <p id="ip"></p>
+  <hr class="yellow">
+
+  <h2>Consulta de CEP:</h2>
+  <input type="text" id="cep-input" placeholder="Digite um CEP">
+  <button id="cep-button" onclick="consultarCEP()">Consultar</button>
+
+  <h3>Resultado:</h3>
+  <p id="logradouro">Logradouro: </p>
+  <p>complemento: <input type="text" id="complemento" placeholder="Número, bloco, apt..."></p> 
+  <p id="bairro">Bairro: </p>
+  <p id="localidade">Localidade: </p>
+  <p id="uf">UF: </p>
+  <p id="ddd">DDD: </p>
+
+  <style>
+    body {
+      background-color: rgb(70, 70, 70);
+      color: yellow;
+    }
+
+    button {
+      background-color: yellow;
+    }
+
+    button:hover {
+      background-color: rgb(188, 188, 4);
+    }
+
+    input {
+      background-color: yellow;
+    }
+
+    .yellow {
+      border-color: yellow;
+    }
+  </style>
+
+  <script>
+    function obterIP() {
+      fetch('https://api.ipify.org/?format=json')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('ip').textContent = data.ip;
+        })
+        .catch(error => {
+          console.log('Erro ao obter o IP:', error);
+        });
+    }
+
+    let button = document.getElementById("cep-button")
+    let input = document.getElementById("cep-input")
+    input.addEventListener("keyup", function(event){
+      if (event.keyCode === 13) {
+        button.click()
+      }
+    })
+
+    function consultarCEP() {
+      let cep = document.getElementById('cep-input').value;
+      if (cep.length !== 8) {
+        alert('CEP inválido');
+        return;
+      }
+
+      fetch('https://viacep.com.br/ws/' + cep + '/json/')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('logradouro').textContent = 'Logradouro: ' + data.logradouro;
+          document.getElementById('bairro').textContent = 'Bairro: ' + data.bairro;
+          document.getElementById('localidade').textContent = 'Localidade: ' + data.localidade;
+          document.getElementById('uf').textContent = 'UF: ' + data.uf;
+          document.getElementById('ddd').textContent = 'DDD: ' + data.ddd;
+        })
+        .catch(error => {
+          console.log('Erro ao consultar o CEP:', error);
+        });
+    }
+    
+    obterIP();
+  </script>
+</body>
+</html>
